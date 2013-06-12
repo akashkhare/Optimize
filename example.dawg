@@ -1,0 +1,8 @@
+Tree.Tree = (C_%r: 0.15 ,A_%r: 0.15 );
+Root.Length = 1000
+Subst.Model = jc
+Subst.Freqs = 0.2,0.3,0.3,0.2
+Indel.Model = geo
+Indel.Params = 4
+Indel.Rate = 0.1
+Sim.Reps = 100
