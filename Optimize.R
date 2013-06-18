@@ -3,7 +3,7 @@ library("biglm")
 suppressPackageStartupMessages(library("optparse"))
 
 #set path to dawg as wanted
-dawg_bin <- dawg
+dawg_bin <- "dawg"
 cmd_dawg <- sprintf("%s - -o R.fasta --label=on", dawg_bin)
 
 option_list <- list(
