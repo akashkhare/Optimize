@@ -2,6 +2,10 @@
 library("biglm")
 suppressPackageStartupMessages(library("optparse"))
 
+#set path to dawg as wanted
+dawg_bin <- dawg
+cmd_dawg <- sprintf("%s - -o R.fasta --label=on", dawg_bin)
+
 option_list <- list(
 
 	make_option(c("-f", "--FileName"), action="store", type = "character", default=NULL,
@@ -44,7 +48,7 @@ start_time <- proc.time()
 
 if (is.null(opt$FileName) == T) { 
 	ExactFile<-readLines(file("example.dawg", "r"))
-	system ('dawg - -o R.fasta --label=on', intern = FALSE, input = ExactFile)
+	system (cmd_dawg, intern = FALSE, input = ExactFile)
 } else {
 	invisible(file.copy(opt$FileName, "R.fasta"))
 }
@@ -144,7 +148,7 @@ while (finished == 0) {
 		sink()
 
 		EstimateFile<-readLines(file("Final.dawg", "r"))
-		system ('dawg - -o R.fasta --label=on', intern = FALSE, input = EstimateFile)
+		system (cmd_dawg, intern = FALSE, input = EstimateFile)
 		#system ('perl -i -pe \'s/%r/++$i/eg\' R.fasta', intern = FALSE)
 		system ('./NgilaWrapper R.fasta',intern = FALSE)	
 
@@ -198,7 +202,7 @@ while (finished == 0) {
 		sink()
 
 		EstimateFile<-readLines(file("Final.dawg", "r"))
-		system ('dawg - -o R.fasta --label=on', intern = FALSE, input = EstimateFile)
+		system (cmd_dawg, intern = FALSE, input = EstimateFile)
 		#system ('perl -i -pe \'s/%r/++$i/eg\' R.fasta', intern = FALSE)
 		system ('./NgilaWrapper R.fasta',intern = FALSE)	
 
@@ -255,7 +259,7 @@ while (finished == 0) {
 		sink()
 
 		EstimateFile<-readLines(file("Final.dawg", "r"))
-		system ('dawg - -o R.fasta --label=on', intern = FALSE, input = EstimateFile)
+		system (cmd_dawg, intern = FALSE, input = EstimateFile)
 		#system ('perl -i -pe \'s/%r/++$i/eg\' R.fasta', intern = FALSE)
 		system ('./NgilaWrapper R.fasta',intern = FALSE)	
 
