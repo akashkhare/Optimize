@@ -17,6 +17,9 @@ using namespace std;
 
 int main (int argc, char* argv[]) {
 
+	//set path to NGILA
+	char cmd_ngila[100] = "ngila";
+
 	vector <char> sequenceA;
 	vector <char> sequenceC;
 	vector <double> answers;
@@ -32,8 +35,8 @@ int main (int argc, char* argv[]) {
 	int indel_length = 0;
 	double nuisance_a, distance_t, rate_r, mean_q, parameter_l;
 
-	sprintf (cmd, "ngila %s -o Output.fasta --pairs each -m geo"
-			, argv[1]);
+	sprintf (cmd, "%s %s -o Output.fasta --pairs each -m geo"
+			, cmd_ngila, argv[1]);
 	system ((char *)cmd);
 
 	file = "Output.fasta";

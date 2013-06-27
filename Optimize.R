@@ -1,6 +1,11 @@
 #!/usr/bin/env Rscript 
-library("biglm")
+
+suppressPackageStartupMessages(library("biglm"))
 suppressPackageStartupMessages(library("optparse"))
+
+#set path to dawg as wanted
+dawg_bin <- "dawg"
+cmd_dawg <- sprintf("%s - -o R.fasta --label=on", dawg_bin)
 
 option_list <- list(
 
@@ -44,7 +49,7 @@ start_time <- proc.time()
 
 if (is.null(opt$FileName) == T) { 
 	ExactFile<-readLines(file("example.dawg", "r"))
-	system ('dawg - -o R.fasta --label=on', intern = FALSE, input = ExactFile)
+	system (cmd_dawg, intern = FALSE, input = ExactFile)
 } else {
 	invisible(file.copy(opt$FileName, "R.fasta"))
 }
@@ -81,15 +86,15 @@ w <- 0.90
 
 mm <- matrix(data = c(BL, M, L, BL*M, BL*L, M*L, BL*M*L), ncol = 7)
 
-t_fit <- (t_func$fit(mm))/2
+t_fit <- abs((t_func$fit(mm))/2)
 t_se <- (sqrt(diag((t_func$se(mm))) + t_reg$qr$ss/t_reg$df))/2
 cat("t fit is: ", t_fit, "\n")
 
-m_fit <- m_func$fit(mm)
+m_fit <- abs(m_func$fit(mm))
 m_se <- sqrt(diag(m_func$se(mm)) + m_reg$qr$ss/m_reg$df)
 cat("m fit is: ", m_fit, "\n")
 
-l_fit <- l_func$fit(mm)
+l_fit <- abs(l_func$fit(mm))
 l_se <- sqrt(diag(l_func$se(mm)) + l_reg$qr$ss/l_reg$df)
 cat("l fit is: ", l_fit, "\n")
 cat("\n")
@@ -98,6 +103,18 @@ cat("\n")
 interval_t <- cbind(t_fit,t_fit)+cbind(t_se,-t_se)*qt((1-w)/2,t_reg$df)
 interval_m <- cbind(m_fit,m_fit)+cbind(m_se,-m_se)*qt((1-w)/2,m_reg$df)
 interval_l <- cbind(l_fit,l_fit)+cbind(l_se,-l_se)*qt((1-w)/2,l_reg$df)
+
+if ( interval_t[1] < 0 ) {
+	interval_t[1] = 0
+}
+
+if ( interval_m[1] < 0 ) {
+	interval_m[1] = 0
+}
+
+if ( interval_l[1] < 0 ) {
+	interval_l[1] = 0
+}
 
 update_t <- t_fit
 update_m <- m_fit
@@ -110,7 +127,7 @@ cat("interval l is: ", interval_l, "\n")
 cat("\n")
 
 ########################################################################################
-
+comment_1 <- function() {
 count_cycles  <- 1
 finished <- 0
 while (finished == 0) {
@@ -144,7 +161,7 @@ while (finished == 0) {
 		sink()
 
 		EstimateFile<-readLines(file("Final.dawg", "r"))
-		system ('dawg - -o R.fasta --label=on', intern = FALSE, input = EstimateFile)
+		system (cmd_dawg, intern = FALSE, input = EstimateFile)
 		#system ('perl -i -pe \'s/%r/++$i/eg\' R.fasta', intern = FALSE)
 		system ('./NgilaWrapper R.fasta',intern = FALSE)	
 
@@ -198,7 +215,7 @@ while (finished == 0) {
 		sink()
 
 		EstimateFile<-readLines(file("Final.dawg", "r"))
-		system ('dawg - -o R.fasta --label=on', intern = FALSE, input = EstimateFile)
+		system (cmd_dawg, intern = FALSE, input = EstimateFile)
 		#system ('perl -i -pe \'s/%r/++$i/eg\' R.fasta', intern = FALSE)
 		system ('./NgilaWrapper R.fasta',intern = FALSE)	
 
@@ -255,7 +272,7 @@ while (finished == 0) {
 		sink()
 
 		EstimateFile<-readLines(file("Final.dawg", "r"))
-		system ('dawg - -o R.fasta --label=on', intern = FALSE, input = EstimateFile)
+		system (cmd_dawg, intern = FALSE, input = EstimateFile)
 		#system ('perl -i -pe \'s/%r/++$i/eg\' R.fasta', intern = FALSE)
 		system ('./NgilaWrapper R.fasta',intern = FALSE)	
 
@@ -337,3 +354,4 @@ proc.time() - start_time
 cat("\n")
 cat("======================================================== \n")
 ########################################################################################
+}
